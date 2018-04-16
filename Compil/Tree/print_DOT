@@ -1,0 +1,22 @@
+digraph G{
+145377808 [shape = box, style = rounded, color = blue, label = "0"]
+145377808 -> 145377880 [color = blue]
+145377880 [shape = box, style = rounded, color = blue, label = "0"]
+145377880 -> 145378312 [color = blue]
+145378312 [shape = box, style = rounded, color = blue, label = "0"]
+145377880 -> 145378384 [color = blue]
+145378384 [shape = box, style = rounded, color = blue, label = "1"]
+145377880 -> 145378456 [color = blue]
+145378456 [shape = box, style = rounded, color = blue, label = "2"]
+145377880 -> 145378552 [color = blue]
+145378552 [shape = box, style = rounded, color = blue, label = "3"]
+145377808 -> 145377968 [color = blue]
+145377968 [shape = box, style = rounded, color = blue, label = "1"]
+145377808 -> 145378056 [color = blue]
+145378056 [shape = box, style = rounded, color = blue, label = "2"]
+145377808 -> 145378152 [color = blue]
+145378152 [shape = box, style = rounded, color = blue, label = "3"]
+145377808 -> 145378224 [color = blue]
+145378224 [shape = box, style = rounded, color = blue, label = "4"]
+
+}
