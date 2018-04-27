@@ -1,33 +1,6 @@
 #include"tokenator.hpp"
 
 
-token::token(string str, Type _type)
-{
-    assert(!str.empty());
-    value = str;
-    type  = _type;
-}
-
-
-token::~token()
-{
-
-}
-
-
-token::token(const token& token)
-{
-    value = token.value;
-    type  = token.type;
-}
-
-
-token token::operator= (const token& t)
-{
-    return token(t);
-}
-
-
 Tokenator::Tokenator(ifstream* _input)
 {
     assert(_input);
@@ -42,28 +15,64 @@ Tokenator::~Tokenator()
 
 }
 
+void Run_Tokenizator(Tokenator& tokenator)
+{
+    string get_str;
+    vector<token> tmp_arr;
+    size_t line = 0;
 
-vector<string> Tokenator::get_tokens(string str)
+    while(getline(*tokenator.input, get_str))
+    {
+        tmp_arr = tokenator.convert_string_to_token(get_str, line);
+
+        tokenator.arr_token.insert(tokenator.arr_token.end(), tmp_arr.begin(), tmp_arr.end());
+        line++;
+    }
+    if(tokenator.error)
+         tokenator.print_Errors();
+}
+
+vector<string> Tokenator::cut_string(string str)
 {
     size_t len = str.length();
     vector<string> ret;
 
     string tmp_str;
+
     for(int j=0; j<len; j++)
     {
         if(str[j] != ' ')
         {
-            tmp_str+=str[j];
+            if((str[j] == '+')||(str[j] == '-')||(str[j] == '*')||(str[j] == '/')||(str[j] == '=')||(str[j] == '$')||(str[j] == '(')||(str[j] == ')'))
+            {
+                if(!tmp_str.empty())
+                {
+                    ret.push_back(tmp_str);
+                }
+
+                tmp_str.clear();
+
+                tmp_str+=str[j];
+                ret.push_back(tmp_str);
+
+                tmp_str.clear();
+            }
+            else
+                tmp_str+=str[j];
         }
         else
         {
-            ret.emplace_back(tmp_str);
+            if(!tmp_str.empty())
+                ret.push_back(tmp_str);
+
             tmp_str.clear();
             while((j+1<len)&&(str[j+1] == ' '))
                 j++;
         }
     }
-    ret.emplace_back(tmp_str);
+
+    if(!tmp_str.empty())
+        ret.push_back(tmp_str);
 
     return ret;
 }
@@ -102,10 +111,11 @@ bool Tokenator::Is_Int_Number(const string str)
     return true;
 }
 
+
 vector<token> Tokenator::convert_string_to_token(string input_str, size_t line = 0)
 {
     vector<token> ret;
-    vector<string> arr_string_token = get_tokens(input_str);
+    vector<string> arr_string_token = cut_string(input_str);
 
     size_t size = arr_string_token.size();
     bool get_operator = false;
@@ -118,47 +128,98 @@ vector<token> Tokenator::convert_string_to_token(string input_str, size_t line =
         }
         else if(arr_string_token[i][0] == ':')            //get label
         {
+            get_operator = true;
             arr_string_token[i].erase(0,1);
-            token tok(arr_string_token[i], LAB);
-            ret.emplace_back(tok);
+            token tok(arr_string_token[i], LAB, line);
+            ret.push_back(tok);
         }
         else if(map_tokens.count(arr_string_token[i]))    //get token in map
         {
-            token tok = token(arr_string_token[i],map_tokens[arr_string_token[i]]);
+            token tok = token(arr_string_token[i],map_tokens[arr_string_token[i]], line);
 
-            if(tok.type == OP)
+            if((tok.type == OP)||(tok.type == LAB))
             {
                 if(get_operator)
-                {
-                    //Error_More_Than_One_Operator(tmp_string, line);
-                }
+                    Error_More_Than_One_Operator_at_Line(tok.value, line);
+
                 get_operator = true;
             }
-            ret.emplace_back(tok);
+            ret.push_back(tok);
         }
         else if(Is_Int_Number(arr_string_token[i]))      //get number
         {
-            token tok(arr_string_token[i], NUM);
-            ret.emplace_back(tok);
+            token tok(arr_string_token[i], NUM, line);
+            ret.push_back(tok);
         }
         else
-        {
-            //Error_Invalid_Token(tmp_string, line);
-        }
+            Error_Invalid_Token(arr_string_token[i], line);
     }
 
-    //if(!get_operator)
-    //    Error_There_isnt_Operator(tmp_string, line);
+    if(!get_operator)
+        Error_There_arent_any_Operator_at_Line(input_str, line);
 
     return ret;
 }
 
 
-int main()
+void Tokenator::Error_More_Than_One_Operator_at_Line(const string err_token, size_t line)
 {
-    ifstream file("tnput.txt");
-    Tokenator t(&file);
-    vector<token> tok = t.convert_string_to_token("-11 -122 1212 1.22 ;push pop ax");
-    for(int i=0; i<tok.size(); i++)
-        cout << tok[i].value << '\n';
+    error = true;
+    char error_str[256];
+
+    sprintf(error_str, "В строке %d встречено больше одного оператора. Последний встреченный оператор: %s\n", line, err_token.c_str());
+
+    arr_Errors.push_back(error_str);
 }
+
+
+void Tokenator::Error_Invalid_Token(const string err_token, size_t line)
+{
+    error = true;
+    char error_str[256];
+    char tmp_str[128];
+
+
+    strncpy(tmp_str, err_token.c_str(), 128);
+    sprintf(error_str, "в строке %d встречен неизвестный токен: %s\n", line, tmp_str);
+
+    arr_Errors.push_back(error_str);
+}
+
+
+void Tokenator::Error_There_arent_any_Operator_at_Line(const string err_line,  size_t line)
+{
+    error = true;
+    char error_str[512];
+    char tmp_str[256];
+
+
+    strncpy(tmp_str, err_line.c_str(), 256);
+    sprintf(error_str, "в строке %d не встречен ни один оператор\n %s\n", line, tmp_str);
+
+    arr_Errors.push_back(error_str);
+
+}
+
+
+void Tokenator::print_Errors()
+{
+    if(error)
+    {
+        size_t size = arr_Errors.size();
+        for(int i=0; i<size; i++)
+            cout<<arr_Errors[i]<<"\n";
+    }
+    else
+        cout<<"В процессе токенизации не встречено ошибок.\n";
+}
+
+/*int main()
+{
+    ifstream file("input.txt");
+    string str;
+    if(!file)
+        cout<<"HUI\n";
+    Tokenator t(&file);
+    Run_Tokenizator(t);
+}*/

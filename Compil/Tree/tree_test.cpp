@@ -1,14 +1,17 @@
 #include"tree.hpp"
+#include<iostream>
 
-
-int main()
+/*int main()
 {
-    Tree<int>* tree = tree->Create_Tree(0);
+    token tok("push", OP);
+    Tree* tree = Create_Tree(tok);
     for(int i=0; i<5; i++)
-        tree->Add_Child(tree->Create_Tree(i));
+        tree->Add_Child(Create_Tree(tok));
 
-   // tree[0];
     for(int i=0; i<4; i++)
-        (*tree)[0]->Add_Child(tree->Create_Tree(i));
+        (*tree)[0]->Add_Child(Create_Tree(tok));
+
+    tok.value = "21212";
     tree->print_DOT();
-}
+    tree->~Tree();
+}*/
