@@ -25,6 +25,7 @@ class Tree
 
         void Add_Child(token value);
         void Add_Child(Tree* tree);
+        int  get_number_of_children();
         Tree* operator[](int index);
 
         friend Tree* Copy_Tree(Tree* tree);

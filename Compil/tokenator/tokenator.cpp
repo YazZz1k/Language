@@ -19,8 +19,10 @@ void Run_Tokenizator(Tokenator& tokenator)
 {
     string get_str;
     vector<token> tmp_arr;
-    size_t line = 0;
-
+    size_t line = 1;
+    token start("start_token//line_0", PUN, 0);
+    token finish("finish_token//line100000", PUN, 100000);
+    tokenator.arr_token.push_back(start);
     while(getline(*tokenator.input, get_str))
     {
         tmp_arr = tokenator.convert_string_to_token(get_str, line);
@@ -28,6 +30,8 @@ void Run_Tokenizator(Tokenator& tokenator)
         tokenator.arr_token.insert(tokenator.arr_token.end(), tmp_arr.begin(), tmp_arr.end());
         line++;
     }
+
+    tokenator.arr_token.push_back(finish);
     if(tokenator.error)
          tokenator.print_Errors();
 }
@@ -91,15 +95,6 @@ bool Tokenator::Is_Int_Number(const string str)
 
     if(len)
     {
-        if(str[0]=='-')
-        {
-            if((len!=1)&&(isdigit(str[1])))
-            {
-                i = 2;
-            }
-            else return false;
-        }
-
         for(i; i<len; i++)
         {
             if(!isdigit(str[i]))
@@ -131,6 +126,12 @@ vector<token> Tokenator::convert_string_to_token(string input_str, size_t line =
             get_operator = true;
             arr_string_token[i].erase(0,1);
             token tok(arr_string_token[i], LAB, line);
+            ret.push_back(tok);
+        }
+        else if((arr_string_token[i] == "-")&&(i+1<size)&&(Is_Int_Number(arr_string_token[i+1]))&&((i-1)!=0)&&(!Is_Int_Number(arr_string_token[i-1]))) //унарный минус
+        {
+            token tok = token(arr_string_token[i]+arr_string_token[i+1], NUM, line);
+            i++;
             ret.push_back(tok);
         }
         else if(map_tokens.count(arr_string_token[i]))    //get token in map

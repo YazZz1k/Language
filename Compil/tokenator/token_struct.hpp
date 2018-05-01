@@ -68,7 +68,6 @@ static map <string,Type> map_tokens = {
 {"-" ,MATH_OP},
 {"*" ,MATH_OP},
 {"/" ,MATH_OP},
-{"$" , PUN},
 {"(" , PUN},
 {")" , PUN},
 {"=" ,  OP}

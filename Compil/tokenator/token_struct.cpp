@@ -31,5 +31,6 @@ token token::operator= (const token& t)
 {
     value = t.value;
     type  = t.type;
+    line  = t.line;
     return *this;
 }

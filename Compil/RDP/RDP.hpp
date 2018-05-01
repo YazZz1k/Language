@@ -11,6 +11,7 @@ class RDP
 {
     private:
         vector<token> arr;
+        size_t arr_size;
         int ptr;
 
         bool errors;
@@ -51,14 +52,22 @@ class RDP
         Tree* Get_Own(size_t line);
 
         bool Is_Math_Op(string op_name, size_t line);
+        bool Is_PUN(string pun_name, size_t line);
     private:
         void skip_line(size_t line);
         void Error_Invalid_Arguments            (string op_name, size_t line);
-        void Error_Invalid_Arg_for_Math_Op(string op_name, size_t line);
+        void Error_Invalid_Arg_for_Math_Op(int error_ptr, size_t line);
         void Error_Need_Operator(size_t line);
         void Error_Unknown_Operator(string op_name, size_t line);
         void Error_Unknown_Error(size_t line);
-        void Error_Need_Dollar(size_t line);
+
+
+        void Error_Need_Own(size_t line);
+        void Error_Need_Bracket(size_t line);
+
+        void Error_Invalid_Expression(size_t line);
+
+        string Get_Error_line(int error_ptr, size_t line);
     public:
         void print_Errors();
 };

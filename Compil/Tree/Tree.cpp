@@ -60,6 +60,12 @@ void Tree::Add_Child(Tree* tree)
 }
 
 
+int Tree::get_number_of_children()
+{
+    return children.size();
+}
+
+
 Tree* Tree::operator[](int index)
 {
     size_t size = children.size();

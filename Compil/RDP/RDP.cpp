@@ -3,7 +3,8 @@
 RDP::RDP(vector<token> _arr)
 {
     arr  = _arr;
-    ptr  = 0;
+    ptr  = 1;
+    arr_size = arr.size();
 }
 
 
@@ -22,13 +23,10 @@ Tree* RDP::Get_Push()
 
     Tree* arg = Get_Reg_or_Num(line);
 
-    if(arg)
+    if(arg&&(arr[ptr].line != line))
         ret->Add_Child(arg);
     else
-    {
         Error_Invalid_Arguments("push", line);
-        skip_line(line);
-    }
 
     return ret;
 }
@@ -43,12 +41,12 @@ Tree* RDP::Get_Pop ()
 
     Tree* arg = Get_Reg(line);
 
-    if(arg)
+    if(arg&&(arr[ptr].line != line))
         ret->Add_Child(arg);
     else
     {
+        cout<<arr[ptr].line;
         Error_Invalid_Arguments("pop", line);
-        skip_line(line);
     }
 
     return ret;
@@ -64,29 +62,36 @@ Tree* RDP::Get_Mov ()
     Tree* arg_1 = Get_Reg(line);
     Tree* arg_2 = Get_Reg_or_Num(line);
 
-    if(arg_1&&arg_2)
+    if((arg_1&&arg_2)&&(arr[ptr].line!= line))
     {
         ret->Add_Child(arg_1);
         ret->Add_Child(arg_2);
     }
     else
-    {
         Error_Invalid_Arguments("mov", line);
-        skip_line(line);
-    }
 
     return ret;
 }
 
 Tree* RDP::Get_Add ()
 {
-    return Create_Tree(arr[ptr++]);
+    Tree* ret = Create_Tree(arr[ptr++]);
+
+    if(arr[ptr].line == arr[ptr-1].line)
+        Error_Invalid_Arguments("add", arr[ptr].line);
+
+    return ret;
 }
 
 
 Tree* RDP::Get_Sub ()
 {
-    return Create_Tree(arr[ptr++]);
+    Tree* ret = Create_Tree(arr[ptr++]);
+
+    if(arr[ptr].line == arr[ptr-1].line)
+        Error_Invalid_Arguments("sub", arr[ptr].line);
+
+    return ret;
 }
 
 
@@ -99,13 +104,10 @@ Tree* RDP::Get_In()
 
     Tree* arg = Get_Reg(line);
 
-    if(arg)
+    if(arg&&(arr[ptr].line != line))
         ret->Add_Child(arg);
     else
-    {
         Error_Invalid_Arguments("in", line);
-        skip_line(line);
-    }
 
     return ret;
 }
@@ -120,13 +122,10 @@ Tree* RDP::Get_Out ()
 
     Tree* arg = Get_Reg_or_Num(line);
 
-    if(arg)
+    if(arg&&(arr[ptr].line != line))
         ret->Add_Child(arg);
     else
-    {
         Error_Invalid_Arguments("out", line);
-        skip_line(line);
-    }
 
     return ret;
 }
@@ -142,16 +141,13 @@ Tree* RDP::Get_Cmp ()
     Tree* arg_1 = Get_Reg_or_Num(line);
     Tree* arg_2 = Get_Reg_or_Num(line);
 
-    if(arg_1&&arg_2)
+    if((arg_1&&arg_2)&&(arr[ptr].line != line))
     {
         ret->Add_Child(arg_1);
         ret->Add_Child(arg_2);
     }
     else
-    {
         Error_Invalid_Arguments("cmp", line);
-        skip_line(line);
-    }
 
     return ret;
 }
@@ -166,13 +162,10 @@ Tree* RDP::Get_Dec()
 
     Tree* arg = Get_Reg(line);
 
-    if(arg)
+    if(arg&&(arr[ptr].line != line))
         ret->Add_Child(arg);
     else
-    {
         Error_Invalid_Arguments("dec", line);
-        skip_line(line);
-    }
 
     return ret;
 }
@@ -187,13 +180,10 @@ Tree* RDP::Get_Jmp ()
 
     Tree* arg = Get_Lab(line);
 
-    if(arg)
+    if(arg&&(arr[ptr].line != line))
         ret->Add_Child(arg);
     else
-    {
         Error_Invalid_Arguments("jmp", line);
-        skip_line(line);
-    }
 
     return ret;
 }
@@ -208,13 +198,10 @@ Tree* RDP::Get_Jnz ()
 
     Tree* arg = Get_Lab(line);
 
-    if(arg)
+    if(arg&&(arr[ptr].line != line))
         ret->Add_Child(arg);
     else
-    {
         Error_Invalid_Arguments("jnz", line);
-        skip_line(line);
-    }
 
     return ret;
 }
@@ -229,13 +216,10 @@ Tree* RDP::Get_Jne ()
 
     Tree* arg = Get_Lab(line);
 
-    if(arg)
+    if(arg&&(arr[ptr].line != line))
         ret->Add_Child(arg);
     else
-    {
         Error_Invalid_Arguments("jne", line);
-        skip_line(line);
-    }
 
     return ret;
 
@@ -251,13 +235,10 @@ Tree* RDP::Get_Jle ()
 
     Tree* arg = Get_Lab(line);
 
-    if(arg)
+    if(arg&&(arr[ptr].line != line))
         ret->Add_Child(arg);
     else
-    {
         Error_Invalid_Arguments("jle", line);
-        skip_line(line);
-    }
 
     return ret;
 }
@@ -270,9 +251,8 @@ Tree* RDP::Get_Root()
 
 
     Tree* added;
-    size_t arr_size = arr.size();
 
-    while(ptr < arr_size)
+    while(arr[ptr].line < 100000)
     {
         if(arr[ptr].type == OP)
         {
@@ -290,34 +270,17 @@ Tree* RDP::Get_Root()
             else if ( arr[ptr].value == "jne"  )  added = Get_Jne ();
             else if ( arr[ptr].value == "jle"  )  added = Get_Jle ();
             else
-            {
                 Error_Unknown_Operator(arr[ptr].value, arr[ptr].line);
-                skip_line(arr[ptr].line);
-            }
         }
-        else if((arr[ptr].type == PUN)&&(arr[ptr].value == "$"))
-        {
+        else if(arr[ptr].type == REG)
             added = Get_Expr(arr[ptr].line);
-        }
         else if(arr[ptr].type == LAB)
-        {
             added = Create_Tree(arr[ptr++]);
-        }
         else
-        {
             Error_Need_Operator(arr[ptr].line);
-            skip_line(arr[ptr].line);
-        }
 
-        if(!added)
-        {
-            Error_Unknown_Error(arr[ptr].line);
-            skip_line(arr[ptr].line);
-        }
-        else
-        {
+        if(added)
             root->Add_Child(added);
-        }
     }
 
     return root;
@@ -361,98 +324,67 @@ Tree* RDP::Get_Expr(size_t line)
 {
     errors = false;
 
-    Tree* ret = Create_Tree(arr[ptr++]);
-    Tree* added = Get_Reg(line);
+    Tree* ret;
 
-    if(!added)
-    {
-        cout<<"Error 1 in Get_Expr\n";
-        //Error_Need_Reg();
-        skip_line(line);
-        return ret;
-    }
-    ret->Add_Child(added);
-
+    Tree* reg = Get_Reg(line);
+    assert(reg);
+    if(!reg)
+        cout<<"Ты обосрался и прога это поняла в Get_Expr\n";
+    ret = reg;
 
     Tree* own = Get_Own(line);
     if(!own)
     {
-        cout<<"Error2 in Get_Expr\n";
-        //Error_Need_Owm();
-        skip_line(line);
-        return ret;
+        if(!errors)Error_Need_Own(line);
+        return NULL;
     }
-    (*ret)[0]->Add_Child(own);
+    reg->Add_Child(own);
 
-
-    Tree* Expr = Get_E(line);
-    if(!Expr)
+    Tree* expr = Get_E(line);
+    if(!expr)
     {
-        cout<<"Херовое выражение\n";
-        skip_line(line);
-        return ret;
+        if(!errors)Error_Invalid_Expression(line);
+        return NULL;
     }
-    own->Add_Child(Expr);
-
-
-    if(!((arr[ptr].type == PUN)&&(arr[ptr].value == "$")))
-    {
-        if(!errors)
-        {
-            Error_Need_Dollar(line);
-            skip_line(line);
-            return ret;
-        }
-    }
-    else
-    {
-        ptr++;
-    }
+    own->Add_Child(expr);
 
     return ret;
 }
 
 
-bool RDP::Is_Math_Op(string op_name, size_t line)
+Tree* RDP::Get_E(size_t line)
 {
-    return ((arr[ptr].type == MATH_OP)&&(arr[ptr].value == op_name)&&(arr[ptr].line == line));
-}
+    Tree *added_left,
+         *added_right,
+         *ret;
+    int copy_ptr;
 
+    added_left = Get_T(line);
 
-Tree* RDP::Get_E(size_t line)   //в дереве будет стоять только  +/-, а информация о знаке будет лежать в LINE  0 - "-", !0 - "+";
-{
-    Tree* added = Get_T(line);
-
-    if(!(Is_Math_Op("+", line)||Is_Math_Op("-", line)))
-        return added;
-
-    token plus("PLUS/MINUS", OP, 0);
-    Tree* ret = Create_Tree(plus);
-    ret->Add_Child(added);
-
-    size_t size = arr.size();
-    int get_plus_or_minus; //0 - '-' !0 - "+"
-
-    while(ptr<size)
+    if(!added_left)
     {
-        if     (Is_Math_Op("+", line)) {ptr++; get_plus_or_minus = 1;}
-        else if(Is_Math_Op("-", line)) {ptr++; get_plus_or_minus = 0;}
-        else
-        {
-            return ret;
-        }
-
-        added = Get_T(line);
-        if(!added)
-        {
-            Error_Invalid_Arg_for_Math_Op(arr[ptr-1].value, line);
-            skip_line(line);
-            return ret;
-        }
-
-        added->value.line = get_plus_or_minus;
-        ret->Add_Child(added);
+        if(Is_Math_Op("+", line)||Is_Math_Op("-", line))
+            if(!errors)Error_Invalid_Arg_for_Math_Op(ptr, line);
+        return NULL;
     }
+
+
+    if(Is_Math_Op("+", line)||Is_Math_Op("-", line))
+    {
+        ret = Create_Tree(arr[ptr++]);
+        ret->Add_Child(added_left);
+    }
+    else
+        return added_left;
+
+    copy_ptr = ptr;
+    added_right = Get_E(line);
+    if(!added_right)
+    {
+        if(!errors)Error_Invalid_Arg_for_Math_Op(copy_ptr, line);
+        return NULL;
+    }
+    ret->Add_Child(added_right);
 
     return ret;
 }
@@ -460,29 +392,35 @@ Tree* RDP::Get_E(size_t line)   //в дереве будет стоять тол
 
 Tree* RDP::Get_T(size_t line)
 {
-    Tree *ret,
+    Tree *added_left,
          *added_right,
-         *added_left = Get_P(line);
+         *ret;
+    int copy_ptr;
 
-    if(Is_Math_Op("/", line)||Is_Math_Op("*", line))
+    added_left = Get_P(line);
+    if(!added_left)
+    {
+        if(Is_Math_Op("*", line)||Is_Math_Op("/", line))
+            if(!errors)Error_Invalid_Arg_for_Math_Op(ptr, line);
+        return NULL;
+    }
+
+
+    if(Is_Math_Op("*", line)||Is_Math_Op("/", line))
     {
         ret = Create_Tree(arr[ptr++]);
+        ret->Add_Child(added_left);
     }
     else
-    {
         return added_left;
-    }
 
-    ret->Add_Child(added_left);
+    copy_ptr = ptr;
     added_right = Get_T(line);
-
     if(!added_right)
     {
-        Error_Invalid_Arg_for_Math_Op(arr[ptr-1].value, line);
-        skip_line(line);
-        return ret;
+        if(!errors)Error_Invalid_Arg_for_Math_Op(copy_ptr, line);
+        return NULL;
     }
-
     ret->Add_Child(added_right);
 
     return ret;
@@ -494,57 +432,62 @@ Tree* RDP::Get_P(size_t line)
 {
     Tree* ret;
 
-    if(arr[ptr].value == "(")
+    if(Is_PUN("(", line))
     {
         ptr++;
-        ret = Get_E(line);
-        if(arr[ptr].value == ")")
+        ret = Get_E(line); //TO DO
+
+        if(Is_PUN(")", line))
         {
             ptr++;
             return ret;
         }
         else
-        {
-            skip_line(line);
-            return NULL;
-        }
+            if(!errors)Error_Need_Bracket(line);
     }
 
-    ret = Get_Reg_or_Num(line);
-
-    return ret;
+    return Get_Reg_or_Num(line);
 }
+
+
+bool RDP::Is_Math_Op(string op_name, size_t line)
+{
+    cout<<"Is math_op\n";
+    return ((arr[ptr].type == MATH_OP)&&(arr[ptr].value == op_name)&&(arr[ptr].line == line));
+}
+
+bool RDP::Is_PUN(string pun_name, size_t line)
+{
+    return ((arr[ptr].type == PUN)&&(arr[ptr].value == pun_name)&&(arr[ptr].line == line));
+}
+
 
 void RDP::skip_line(size_t skiped_line)
 {
     size_t size = arr.size();
 
-    cout<<"in skip_line\n";
     while((ptr<size)&&(arr[ptr].line == skiped_line))
     {
-        cout<<arr[ptr].value<<'\n';
         ptr++;
     }
-
-    cout<<"at end of skip_line  "<<arr[ptr].value<<'\n';
 }
 
-void RDP::Error_Invalid_Arg_for_Math_Op(const string op_name, size_t line)
+string RDP::Get_Error_line(int error_ptr, size_t line)
 {
-    errors = true;
-    char error_str[256];
-    char tmp_str[128];
+    string tmp_error_str;
+    int tmp_ptr = error_ptr;
+    int err_ptr = error_ptr;
+    int size_arr = arr.size();
 
-    strncpy(tmp_str, op_name.c_str(), 128);
-
-    string tmp_error_str = "";
-    int tmp_ptr = ptr;
-    int err_ptr = ptr;
-
+    err_ptr++;
     while((arr[tmp_ptr].line == line)&&(tmp_ptr != 0))
     {
         tmp_ptr--;
     }
+
+    if(arr[tmp_ptr].line != line)
+        tmp_ptr++;
+
 
     while(tmp_ptr != err_ptr)
     {
@@ -553,19 +496,16 @@ void RDP::Error_Invalid_Arg_for_Math_Op(const string op_name, size_t line)
 
     tmp_error_str+="(!Ошибка!)";
 
-    while(arr[tmp_ptr].line == line)
+    while((tmp_ptr<size_arr)&&(arr[tmp_ptr].line == line))
     {
         tmp_error_str+=arr[tmp_ptr++].value;
     }
 
     tmp_error_str+='\n';
 
-    sprintf(error_str, "\nОшибка в обработке выражения на строке %d. Неправильный аргумент для математического оператора %s\n", line, tmp_str);
-    string string_error_str(error_str);
-    string_error_str+=tmp_error_str;
-
-    Errors.push_back(string_error_str);
+    return tmp_error_str;
 }
+
 
 void RDP::Error_Invalid_Arguments(const string op_name, size_t line)
 {
@@ -578,8 +518,95 @@ void RDP::Error_Invalid_Arguments(const string op_name, size_t line)
 
     Errors.push_back(error_str);
 
+    skip_line(line);
 }
 
+void RDP::Error_Need_Operator(size_t line)
+{
+    errors = true;
+    char error_str[256];
+
+    sprintf(error_str, "\nОшибка в строке %d. Необходим оператор\n", line);
+
+    Errors.push_back(error_str);
+
+    skip_line(line);
+}
+
+
+void RDP::Error_Unknown_Operator(string op_name,size_t line)
+{
+    errors = true;
+    char error_str[256];
+    char tmp_str[128];
+
+    strncpy(tmp_str, op_name.c_str(), 128);
+    sprintf(error_str, "\nОшибка в строке %d. Неизвестный оператор %s\n", line, tmp_str);
+
+    Errors.push_back(error_str);
+
+    skip_line(line);
+}
+
+
+void RDP::Error_Unknown_Error(size_t line)
+{
+    errors = true;
+    char error_str[256];
+
+    sprintf(error_str, "\nНеизвестная ошибка в строке %d\n", line);
+
+    Errors.push_back(error_str);
+}
+
+
+void RDP::Error_Invalid_Expression(size_t line)
+{
+    errors = true;
+    char error_str[256];
+
+    sprintf(error_str, "\nНеправильное выражение в строке %d\n", line);
+
+    Errors.push_back(error_str);
+}
+
+
+void RDP::Error_Need_Own(size_t line)
+{
+    errors = true;
+    char error_str[256];
+
+    sprintf(error_str, "\nОшибка в строке %d.\nНеобходимо присваивание после регистра\n", line);
+
+    Errors.push_back(error_str);
+
+    skip_line(line);
+}
+
+
+void RDP::Error_Need_Bracket(size_t line)
+{
+    errors = true;
+    char error_str[256];
+
+    sprintf(error_str, "\nОшибка в строке %d.\nНеобходима закрываюшая скобка\n", line);
+
+    Errors.push_back(error_str+Get_Error_line(ptr-1, line)+'\n');
+
+    skip_line(line);
+}
+
+void RDP::Error_Invalid_Arg_for_Math_Op(int error_ptr, size_t line)
+{
+    errors = true;
+    char error_str[256];
+
+    sprintf(error_str, "\nОшибка в строке %d.\nНеправильный аргумент для математического оператора\n", line);
+
+    Errors.push_back(error_str+Get_Error_line(error_ptr-1, line)+'\n');
+
+    skip_line(line);
+}
 
 void RDP::print_Errors()
 {
@@ -597,56 +624,9 @@ void RDP::print_Errors()
 }
 
 
-void RDP::Error_Need_Operator(size_t line)
-{
-    errors = true;
-    char error_str[256];
-
-    sprintf(error_str, "\nОшибка в строке %d. Необходим оператор\n", line);
-
-    Errors.push_back(error_str);
-}
-
-
-void RDP::Error_Unknown_Operator(string op_name,size_t line)
-{
-    errors = true;
-    char error_str[256];
-    char tmp_str[128];
-
-    strncpy(tmp_str, op_name.c_str(), 128);
-    sprintf(error_str, "\nОшибка в строке %d. Неизвестный оператор %s\n", line, tmp_str);
-
-    Errors.push_back(error_str);
-}
-
-
-void RDP::Error_Unknown_Error(size_t line)
-{
-    errors = true;
-    char error_str[256];
-
-    sprintf(error_str, "\nНеизвестная ошибка в строке %d\n", line);
-
-    Errors.push_back(error_str);
-}
-
-
-void RDP::Error_Need_Dollar(size_t line)
-{
-    errors = true;
-    char error_str[256];
-
-    sprintf(error_str, "\nНеобходим $ в конце выражения на строке %d\n", line);
-
-    Errors.push_back(error_str);
-}
-
-
 Tree* Parser(RDP& rdp)
 {
     rdp.ret_tree = rdp.Get_Root();
     return Copy_Tree(rdp.ret_tree);
 }
-
 
