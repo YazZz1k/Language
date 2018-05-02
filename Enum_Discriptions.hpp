@@ -26,17 +26,19 @@ typedef enum
     CMP_REG_NUM = 84,
 
     DEC_REG = 91,
-    DEC_NUM = 92,
 
     JMP = 101,
-    JMZ = 102,
+    JNZ = 102,
     JNE = 103,
     JLE = 104,
 
     AX = 111,
     BX = 112,
     CX = 113,
-    DX = 114
+    DX = 114,
+
+    EMPTY = 0,
+    END   = 1
 }Commands;
 
 #endif

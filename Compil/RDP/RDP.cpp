@@ -282,7 +282,8 @@ Tree* RDP::Get_Root()
         if(added)
             root->Add_Child(added);
     }
-
+    errors = (bool)Errors.size();
+    root->print_DOT();
     return root;
 }
 
@@ -368,7 +369,6 @@ Tree* RDP::Get_E(size_t line)
         return NULL;
     }
 
-
     if(Is_Math_Op("+", line)||Is_Math_Op("-", line))
     {
         ret = Create_Tree(arr[ptr++]);
@@ -452,7 +452,6 @@ Tree* RDP::Get_P(size_t line)
 
 bool RDP::Is_Math_Op(string op_name, size_t line)
 {
-    cout<<"Is math_op\n";
     return ((arr[ptr].type == MATH_OP)&&(arr[ptr].value == op_name)&&(arr[ptr].line == line));
 }
 
@@ -624,9 +623,9 @@ void RDP::print_Errors()
 }
 
 
-Tree* Parser(RDP& rdp)
+void Run_RDP(RDP& rdp)
 {
     rdp.ret_tree = rdp.Get_Root();
-    return Copy_Tree(rdp.ret_tree);
+    rdp.print_Errors();
 }
 

@@ -14,15 +14,16 @@ class RDP
         size_t arr_size;
         int ptr;
 
-        bool errors;
         vector<string> Errors;
+    public:
+        bool errors;
 
         Tree* ret_tree;
     public:
         RDP(vector<token> _arr);
         ~RDP();
 
-        friend Tree* Parser(RDP& rdp);
+        friend void Run_RDP(RDP& rdp);
 
     private:
         Tree* Get_Root();

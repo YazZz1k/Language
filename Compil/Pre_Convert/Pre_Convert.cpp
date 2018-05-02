@@ -26,7 +26,12 @@ Tree* Pre_Convert::get_Pre_Converted_Tree()
 }
 
 
-void Pre_Convert::Start_Pre_Convert()
+map<string, int> Pre_Convert::get_labels()
+{
+    return labels;
+}
+
+void Pre_Convert::Run_Pre_Convert()
 {
     int size = input_tree->get_number_of_children();
     Tree *current,
@@ -59,9 +64,9 @@ void Pre_Convert::Start_Pre_Convert()
         }
     }
 
-    output_tree->print_DOT();
-
     Init_Labels();
+
+    print_Errors();
 }
 
 
@@ -104,8 +109,6 @@ void Pre_Convert::Init_Labels()
 
         current->value.line = i+1;
     }
-
-    print_labels();
 }
 
 

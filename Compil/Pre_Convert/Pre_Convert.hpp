@@ -22,16 +22,19 @@ class Pre_Convert
         map<string, int> labels;
         Tree* conv_Expr;
 
-        bool error;
         vector<string> Errors;
+    public:
+        bool error;
+
     public:
         Pre_Convert(Tree* in_tree);
         ~Pre_Convert();
 
         Tree* get_Pre_Converted_Tree();
+        map<string, int> get_labels();
 
-    public:
-        void Start_Pre_Convert();
+        void Run_Pre_Convert();
+    private:
         void Init_Labels();
         void Convert_Expr(Tree* Expr);
 

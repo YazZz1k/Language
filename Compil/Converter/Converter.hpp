@@ -6,6 +6,7 @@
 
 #include"stdlib.h"
 
+#include<map>
 #include<iostream>
 #include<vector>
 #include<string>
@@ -15,15 +16,18 @@ class Converter
 {
     private:
         Tree* input_tree;
+        map<string,int> map_labels;
+
         vector<int> commands;
 
     public:
-        Converter(Tree* tree);
+        Converter(Tree* tree, map<string, int> labels);
         ~Converter();
-        void Start();
+        void Run_Converter();
         vector<int> Get_Commands();
 
     private:
+        void conv_label();
         void conv_reg(Tree* tree);
         void conv_num(Tree* tree);
 
@@ -37,7 +41,8 @@ class Converter
         void conv_cmp (Tree* tree);
         void conv_dec (Tree* tree);
         void conv_jmp (Tree* tree);
-        void conv_jmz (Tree* tree);
+        void conv_jnz (Tree* tree);
+        void conv_jne (Tree* tree);
         void conv_jle (Tree* tree);
 };
 
