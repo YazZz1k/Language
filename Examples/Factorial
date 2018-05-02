@@ -1,0 +1,7 @@
+in ax    ;ввод числа, чей факториал будем считать
+bx = 1
+:cicle
+bx = bx*ax
+dec ax
+jnz :cicle
+out bx

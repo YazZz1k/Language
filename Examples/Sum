@@ -1,0 +1,15 @@
+in ax ;введите кол-во суммируемых чисел
+cx = ax-1
+:label
+in bx
+push bx
+dec ax
+jnz :label
+
+:label2
+add
+dec cx
+jnz :label2
+
+pop bx
+out bx

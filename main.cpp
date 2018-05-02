@@ -149,9 +149,11 @@ int main(int argv, char** argc)
         out_f.open(output);
 
         if(!in_f)
+        {
             Error_Cant_Open_File(input);
+            return 1;
+        }
 
-        cout<<"compil input::"<<input<<"output::"<<output<<endl;
         Compil(&in_f, &out_f);
         in_f.close();
         out_f.close();
@@ -161,9 +163,11 @@ int main(int argv, char** argc)
         in_f. open(input);
 
         if(!in_f)
+        {
             Error_Cant_Open_File(input);
+            return 1;
+        }
 
-        cout<<"run input::"<<input<<"output::"<<output<<endl;
         Run(&in_f);
         in_f.close();
     }
@@ -173,9 +177,11 @@ int main(int argv, char** argc)
         out_f.open(output);
 
         if(!in_f)
+        {
             Error_Cant_Open_File(input);
+            return 1;
+        }
 
-        cout<<"compil and run input::"<<input<<"output::"<<output<<endl;
         Compil(&in_f, &out_f);
         out_f.close();
         in_f.close();

@@ -25,9 +25,12 @@ void Run_Tokenator(Tokenator& tokenator)
     tokenator.arr_token.push_back(start);
     while(getline(*tokenator.input, get_str))
     {
-        tmp_arr = tokenator.convert_string_to_token(get_str, line);
+        if(get_str!="")
+        {
+            tmp_arr = tokenator.convert_string_to_token(get_str, line);
 
-        tokenator.arr_token.insert(tokenator.arr_token.end(), tmp_arr.begin(), tmp_arr.end());
+            tokenator.arr_token.insert(tokenator.arr_token.end(), tmp_arr.begin(), tmp_arr.end());
+        }
         line++;
     }
 

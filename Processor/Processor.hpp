@@ -45,6 +45,8 @@ class Processor
         void pop_reg ();
         void mov_reg_reg();
         void mov_reg_num();
+        void mul();
+        void div();
         void add();
         void sub();
         void in_reg();

@@ -1,0 +1,3 @@
+in ax
+bx = -1*ax*(ax-1)
+out bx

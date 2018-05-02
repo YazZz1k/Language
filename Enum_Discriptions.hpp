@@ -12,8 +12,9 @@ typedef enum
     MOV_REG_NUM = 32,
 
     ADD = 41,
-
-    SUB = 51,
+    SUB = 42,
+    MUL = 43,
+    DIV = 44,
 
     IN_REG = 61,
 

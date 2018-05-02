@@ -15,6 +15,7 @@ Converter::~Converter()
 
 void Converter::Run_Converter()
 {
+    input_tree->print_DOT();
     size_t size = input_tree->get_number_of_children();
 
     for(int i=0; i<size; i++)
@@ -28,7 +29,9 @@ void Converter::Run_Converter()
                 else if(tmp_tree->value.value == "mov")conv_mov (tmp_tree);
                 else if(tmp_tree->value.value == "add")conv_add (tmp_tree);
                 else if(tmp_tree->value.value == "sub")conv_sub (tmp_tree);
-                else if(tmp_tree->value.value == "in")conv_in  (tmp_tree);
+                else if(tmp_tree->value.value == "mul")conv_mul (tmp_tree);
+                else if(tmp_tree->value.value == "div")conv_div (tmp_tree);
+                else if(tmp_tree->value.value == "in" )conv_in  (tmp_tree);
                 else if(tmp_tree->value.value == "out")conv_out (tmp_tree);
                 else if(tmp_tree->value.value == "cmp")conv_cmp (tmp_tree);
                 else if(tmp_tree->value.value == "dec")conv_dec (tmp_tree);
@@ -172,6 +175,29 @@ void Converter::conv_sub (Tree* tree)
     assert(tree->value.type == OP);
 
     commands.push_back(SUB);
+    commands.push_back(EMPTY);
+    commands.push_back(EMPTY);
+}
+
+
+void Converter::conv_mul(Tree* tree)
+{
+    assert(tree);
+    assert(tree->value.type == OP);
+
+    commands.push_back(MUL);
+    commands.push_back(EMPTY);
+    commands.push_back(EMPTY);
+
+}
+
+
+void Converter::conv_div(Tree* tree)
+{
+    assert(tree);
+    assert(tree->value.type == OP);
+
+    commands.push_back(DIV);
     commands.push_back(EMPTY);
     commands.push_back(EMPTY);
 }

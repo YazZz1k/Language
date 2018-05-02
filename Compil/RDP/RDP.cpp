@@ -493,7 +493,7 @@ string RDP::Get_Error_line(int error_ptr, size_t line)
         tmp_error_str+=arr[tmp_ptr++].value;
     }
 
-    tmp_error_str+="(!Ошибка!)";
+    tmp_error_str+="(!)";
 
     while((tmp_ptr<size_arr)&&(arr[tmp_ptr].line == line))
     {

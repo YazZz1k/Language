@@ -2,11 +2,12 @@ SOURCES=main.cpp Compil/RDP/RDP.cpp Compil/tokenator/token_struct.cpp Compil/tok
 OBJECTS=$(SOURCES:.cpp=.o) 
 CC=g++
 CFLAGS=-c
-EXECUTABLE=kir--
+EXECUTABLE=Examples/kir--
 
 
 $(EXECUTABLE):  $(OBJECTS)
 	$(CC)  -g $^ -o $@
+	./$(EXECUTABLE)	-h
 
 %.o: %.cpp
 	$(CC) -g -std=c++11 -c $< -o  $@
@@ -15,4 +16,4 @@ tokenator/token_struct.o: tokenator/token_struct.cpp
 	$(CC) -std=c++11 -c tokenator/token_struct.cpp -o tokenator/token_struct.o
 
 clean:
-	rm -rf $(EXECUTABLE) $(OBJECTS) print_DOT
+	rm -rf $(EXECUTABLE) $(OBJECTS) Examples/print_DOT

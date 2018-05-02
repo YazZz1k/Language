@@ -37,6 +37,8 @@ void Processor::execute()
             case POP_REG:     pop_reg ();    break;
             case MOV_REG_REG: mov_reg_reg(); break;
             case MOV_REG_NUM: mov_reg_num(); break;
+            case MUL:         mul();         break;
+            case DIV:         div();         break;
             case ADD:         add();         break;
             case SUB:         sub();         break;
             case IN_REG:      in_reg();      break;
@@ -145,6 +147,20 @@ void Processor::mov_reg_num()
     ptr++;
     int* reg = get_reg(commands[ptr]);
     ptr++;
+}
+
+
+void Processor::mul()
+{
+    stack.mul();
+    ptr+=3;
+}
+
+
+void Processor::div()
+{
+    stack.div();
+    ptr+=3;
 }
 
 

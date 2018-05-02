@@ -35,6 +35,8 @@ class Converter
         void conv_pop (Tree* tree);
         void conv_mov (Tree* tree);
         void conv_add (Tree* tree);
+        void conv_mul (Tree* tree);
+        void conv_div (Tree* tree);
         void conv_sub (Tree* tree);
         void conv_in  (Tree* tree);
         void conv_out (Tree* tree);
